@@ -1,0 +1,25 @@
+
+-----------------------Function to be executed by trigger------------
+CREATE OR REPLACE FUNCTION set_timestamp()
+RETURNS TRIGGER 
+LANGUAGE PLPGSQL
+AS $$
+BEGIN
+New.modified_on = CURRENT_TIMESTAMP(0);
+RETURN NEW;
+END;
+$$;
+
+---------------------------------TRIGGER------------------------------------
+
+CREATE TRIGGER trigger_set_timestamp
+BEFORE UPDATE
+ON users
+FOR EACH ROW
+EXECUTE PROCEDURE set_timestamp();
+
+---------------------------------Adding columns to tables--------------------
+
+ALTER TABLE users ADD COLUMN created_on TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP(0);
+
+ALTER TABLE users ADD COLUMN modified_on TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP(0);
